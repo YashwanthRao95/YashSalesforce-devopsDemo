@@ -38,6 +38,12 @@ jobs:
                     mv pmd-bin-7.9.0 $HOME/pmd
                     echo "$HOME/pmd/bin" >> $GITHUB_PATH
 
+            # Step 2: Debug - List all files
+            -   name: List All Files
+                run: |
+                    echo "Listing all files in the repository:"
+                    ls -R
+
             # Verify PMD Ruleset and Directory
             -   name: Verify Ruleset and Classes Directory
                 run: |
@@ -45,8 +51,8 @@ jobs:
                     echo "Error: PMD ruleset file not found!"
                     exit 1
                     fi
-                    if [ ! -d "force-app/main/default/classes" ]; then
-                    echo "Error: Directory force-app/main/default/classes not found!"
+                    if [ ! -d "force-app" ]; then
+                    echo "Error: Directory force-app not found!"
                     exit 1
                     fi
 
