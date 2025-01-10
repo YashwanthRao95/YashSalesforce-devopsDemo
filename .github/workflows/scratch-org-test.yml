@@ -32,7 +32,7 @@ jobs:
                 env:
                     SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
                 run: |
-                    sf org login sfdx-url --url "$SFDX_AUTH_URL" --alias DevHub
+                    sf org login sfdx-url --sfdx-url-file ./sf-auth-url.txt --alias DevHub
 
             # Create a scratch org
             -   name: Create scratch org
