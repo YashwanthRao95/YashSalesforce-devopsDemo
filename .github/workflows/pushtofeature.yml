@@ -1,0 +1,70 @@
+# This is a basic workflow to help you get started with Actions
+
+name: PushToFeature
+# Controsl when the workflow will run
+on:
+    # Triggers the workflow on push or pull request events but only for the main branch
+    push:
+        branches: devopsDemo
+    # Jobs to be executed
+jobs:
+    pmd-run:
+        name: Run APEX PMD
+        runs-on: ubuntu-latest
+        steps:
+            # Checkout the source code
+            -   name: 'Checkout Source Code'
+                uses: actions/checkout@v3
+            
+            # Set up Java (PMD requires Java)
+            -   name: Set up Java
+                uses: actions/setup-java@v3
+                with:
+                    java-version: '11'  # PMD supports Java 8, 11, or 17
+                    distribution: 'adopt'
+            
+            # Read PMD Version from pmd-version.txt
+            -   name: Read PMD Version
+                id: read-version
+                run: |
+                    export PMD_VERSION=$(cat pmd/pmd-version.txt)
+                    echo "PMD_VERSION=${PMD_VERSION}" >> $GITHUB_ENV
+
+            # Download and Install PMD
+            -   name: Install PMD
+                run: |
+                    wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F${{ env.PMD_VERSION }}/pmd-bin-${{ env.PMD_VERSION }}.zip
+                    unzip pmd-bin-${{ env.PMD_VERSION }}.zip -d $HOME
+                    export PATH=$HOME/pmd-bin-${{ env.PMD_VERSION }}/bin:$PATH
+
+            # Run PMD with ruleset
+            -   name: Run PMD with custom ruleset
+                run: |
+                    pmd check -d force-app/main/default/classes -R pmd/ruleset.xml -f text
+    
+    create-pr:
+        name: Create Pull Request to main branch
+        needs: pmd-run
+        if: success()
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout Code
+                uses: actions/checkout@v3
+            
+            # Set Git user to the actor (the user who pushed the code)
+            -   name: Set Git User to GITHUB_ACTOR
+                run: |
+                    git config --global user.name "${{ github.actor }}"
+                    git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+            
+            # Create a Pull request
+            -   name: Create Pull Request
+                uses: peter-evans/create-pull-request@v4
+                with:
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    branch: devopsdemo
+                    base: main
+                    title: "Pull Request from ${{ github.actor }}"
+                    body: |
+                        This pull request was automatically created after successful PMD validation.
+                    commit-message: "Auto-generated PR by ${{ github.actor }}"
