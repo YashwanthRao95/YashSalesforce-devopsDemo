@@ -34,14 +34,14 @@ jobs:
             -   name: Install PMD
                 run: |
                     wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.9.0/pmd-dist-7.9.0-bin.zip
-                    unzip pmd-dist-7.9.0-bin.zip
-                    mv pmd-bin-7.9.0 $HOME/pmd
-                    echo "$HOME/pmd/bin" >> $GITHUB_PATH
+                    unzip pmd-dist-7.9.0-bin.zip -d ~
+                    mv ~/pmd-bin-7.9.0 ~/pmd
+                    ~/pmd/bin/run.sh pmd --version
 
             # Run PMD with ruleset
-            -   name: Run PMD with custom ruleset
+            -   name: Run PMD scan with custom ruleset
                 run: |
-                    pmd check -d force-app/main/default/classes -R pmd/ruleset.xml -f text
+                    ~/pmd/bin/run.sh pmd check -d force-app -R pmd/ruleset.xml -f text
     
     create-pr:
         name: Create Pull Request to main branch
