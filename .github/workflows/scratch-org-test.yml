@@ -1,0 +1,61 @@
+name: Create a scratch org and run tests
+
+on:
+    push:
+        branches:
+            -   main
+
+jobs:
+    setup-scratch-org:
+        name: Set up scratch org and run test classes
+        runs-on: ubuntu-latest
+
+        steps:
+            # Checkout the repository
+            -   name: Checkout repository
+                uses: actions/checkout@v3
+                
+            # Install Salesforce CLI (SFDX)
+            -   name: Install Salesforce CLI
+                run: |
+                    wget https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-arm64.tar.xz
+                    mkdir ~/sfdx
+                    tar xJf sfdx-linux-arm64.tar.xz -C ~/sfdx --strip-components 1
+                    ~/sfdx/install
+
+            # Authenticate Dev hub
+            -   name: Authenticate Dev Hub
+                env:
+                    SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
+                run: |
+                    echo "$SFDX_AUTH_URL" > sfdx-auth-url.txt
+                    sfdx auth:sfdxurl:store -f sfdx-auth-url.txt -a DevHub
+
+            # Create a scratch org
+            -   name: Create scratch org
+                run: |
+                    sfdx force:org:create -f config/project-scratch-def.json -d 1 -a MyScratchOrg
+                    sfdx force:org:display -u MyScratchOrg
+            
+            # Deploy source to scratch org
+            -   name: Deploy source
+                run: |
+                    sfdx force:source:push -u MyScratchOrg
+
+            # Run all apex tests
+            -   name: Run apex tests
+                run: |
+                    sfdx force:apex:test:run -u MyScratchOrg --wait 30 --resultformat junit --outputdir test-results
+
+            # Upload test results
+            -   name: Upload test results
+                uses: actions/upload-artifact@v3
+                with:
+                    name: apex-test-results
+                    path: test-results/
+
+            # Output access URL of scratch org
+            -   name: Display scratch org login url
+                run: |
+                    echo "To access the scratch org, run: sfdx force:org:open -u MyScratchOrg"
+
