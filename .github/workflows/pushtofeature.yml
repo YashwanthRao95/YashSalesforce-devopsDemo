@@ -35,7 +35,8 @@ jobs:
                 run: |
                     wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.9.0/pmd-dist-7.9.0-bin.zip
                     unzip pmd-dist-7.9.0-bin.zip
-                    alias pmd="$HOME/pmd-bin-7.9.0/bin/pmd"
+                    mv pmd-bin-7.9.0 $HOME/pmd
+                    echo "$HOME/pmd/bin" >> $GITHUB_PATH
 
             # Run PMD with ruleset
             -   name: Run PMD with custom ruleset
