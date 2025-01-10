@@ -33,14 +33,33 @@ jobs:
             # Download and Install PMD
             -   name: Install PMD
                 run: |
-                    wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F${{ env.PMD_VERSION }}/pmd-bin-${{ env.PMD_VERSION }}.zip
-                    unzip pmd-bin-${{ env.PMD_VERSION }}.zip -d $HOME
-                    export PATH=$HOME/pmd-bin-${{ env.PMD_VERSION }}/bin:$PATH
+                    wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.9.0/pmd-dist-7.9.0-bin.zip
+                    unzip pmd-dist-7.9.0-bin.zip
+                    mv pmd-bin-7.9.0 $HOME/pmd
+                    echo "$HOME/pmd/bin" >> $GITHUB_PATH
+
+            # Step 2: Debug - List all files
+            -   name: List All Files
+                run: |
+                    echo "Listing all files in the repository:"
+                    ls -R
+
+            # Verify PMD Ruleset and Directory
+            -   name: Verify Ruleset and Classes Directory
+                run: |
+                    if [ ! -f "pmd/ruleset.xml" ]; then
+                    echo "Error: PMD ruleset file not found!"
+                    exit 1
+                    fi
+                    if [ ! -d "force-app" ]; then
+                    echo "Error: Directory force-app not found!"
+                    exit 1
+                    fi
 
             # Run PMD with ruleset
             -   name: Run PMD with custom ruleset
                 run: |
-                    pmd check -d force-app/main/default/classes -R pmd/ruleset.xml -f text
+                    pmd check -d force-app -R pmd/ruleset.xml -f text
     
     create-pr:
         name: Create Pull Request to main branch
