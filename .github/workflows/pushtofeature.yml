@@ -33,9 +33,9 @@ jobs:
             # Download and Install PMD
             -   name: Install PMD
                 run: |
-                    wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F${{ env.PMD_VERSION }}/pmd-dist-${{ env.PMD_VERSION }}-bin.zip
-                    unzip pmd-dist-${{ env.PMD_VERSION }}-bin.zip -d $HOME
-                    export PATH=$HOME/pmd-bin-${{ env.PMD_VERSION }}/bin:$PATH
+                    wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.9.0/pmd-dist-7.9.0-bin.zip
+                    unzip pmd-dist-7.9.0-bin.zip
+                    alias pmd="$HOME/pmd-bin-7.9.0/bin/pmd"
 
             # Run PMD with ruleset
             -   name: Run PMD with custom ruleset
