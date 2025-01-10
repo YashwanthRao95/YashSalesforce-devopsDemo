@@ -34,14 +34,26 @@ jobs:
             -   name: Install PMD
                 run: |
                     wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.9.0/pmd-dist-7.9.0-bin.zip
-                    unzip pmd-dist-7.9.0-bin.zip -d ~
-                    mv ~/pmd-bin-7.9.0 ~/pmd
-                    ~/pmd/bin/run.sh pmd --version
+                    unzip pmd-dist-7.9.0-bin.zip
+                    mv pmd-bin-7.9.0 $HOME/pmd
+                    echo "$HOME/pmd/bin" >> $GITHUB_PATH
+
+            # Verify PMD Ruleset and Directory
+            -   name: Verify Ruleset and Classes Directory
+                run: |
+                    if [ ! -f "pmd/ruleset.xml" ]; then
+                    echo "Error: PMD ruleset file not found!"
+                    exit 1
+                    fi
+                    if [ ! -d "force-app/main/default/classes" ]; then
+                    echo "Error: Directory force-app/main/default/classes not found!"
+                    exit 1
+                    fi
 
             # Run PMD with ruleset
-            -   name: Run PMD scan with custom ruleset
+            -   name: Run PMD with custom ruleset
                 run: |
-                    ~/pmd/bin/run.sh pmd check -d force-app -R pmd/ruleset.xml -f text
+                    pmd check -d force-app -R pmd/ruleset.xml -f text
     
     create-pr:
         name: Create Pull Request to main branch
