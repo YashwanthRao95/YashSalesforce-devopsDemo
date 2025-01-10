@@ -8,9 +8,11 @@ public class AccountHandler {
 
     // This method inserts a list of accounts but lacks proper exception handling
     public static void insertAccounts(List<Account> accounts) {
+        List<Account> newAccList = new List<Account>();
         for (Account acc : accounts) {
-            insert acc; // Too many DML statements in a loop
+            newAccList.add(acc); // Too many DML statements in a loop
         }
+        insert newAccList;
     }
 
     // Excessive logic in a single method

@@ -8,6 +8,9 @@
 .localdevserver/
 deploy-options.json
 
+# sfdx-auth-url
+sfdx-auth-url.json
+
 # LWC VSCode autocomplete
 **/lwc/jsconfig.json
 
