@@ -79,9 +79,13 @@ jobs:
             # Ensure devopsDemo branch is preserved
             -   name: Preserve devopsDemo Branch
                 run: |
-                    git fetch origin
+                    git fetch origin devopsDemo
                     git checkout devopsDemo
-                    git push origin devopsDemo
+                    if ! git diff --quiet origin/main; then
+                        git push origin devopsDemo
+                    else
+                        echo "No changes to push to devopsDemo."
+                    fi
             
             # Create a new Pull request
             -   name: Create Pull Request
