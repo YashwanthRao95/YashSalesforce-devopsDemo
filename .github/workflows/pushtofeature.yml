@@ -67,47 +67,24 @@ jobs:
                     pmd check -d force-app -R pmd/ruleset.xml -f text
     
     create-pr:
-        name: Create Pull Request to main branch
+        name: Create Pull Request
         needs: pmd-run
         if: success()
         runs-on: ubuntu-latest
         steps:
-            -   name: Checkout Code
-                uses: actions/checkout@v3
-                with:
-                    ref: devopsDemo
-            
-            # Set Git user to the actor (the user who pushed the code)
-            -   name: Set Git User to GITHUB_ACTOR
-                run: |
-                    git config --global user.name "${{ github.actor }}"
-                    git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+                -   name: Checkout Code
+                    uses: actions/checkout@v3
 
-            -   name: Fetch all branches
-                run: |
-                    git fetch --all
+                -   name: Set up GitHub CLI
+                    run: |
+                        sudo apt-get update
+                        sudo apt-get install -y gh
 
-            -   name: Rebase devopsDemo onto main
-                run: |
-                    git checkout devopsDemo
-                    git rebase --rebase-merges origin/main || git rebase --abort
-              
-            -   name: Push rebased changes
-                run: |
-                    git push --force-with-lease origin devopsDemo
-
-            -   name: Check for changes before creating PR
-                run: |
-                    git diff origin/main..devopsDemo --quiet || exit 1
-            
-            # Create a new Pull request
-            -   name: Create Pull Request
-                uses: peter-evans/create-pull-request@v5
-                with:
-                    token: ${{ secrets.GITHUB_TOKEN }}
-                    branch: devopsDemo
-                    base: main
-                    title: "Pull Request from ${{ github.actor }}"
-                    body: |
-                        This pull request was automatically created after successful PMD validation.
-                    commit-message: "Auto-generated PR by ${{ github.actor }}"
+                -   name: Create Pull Request via GitHub CLI
+                    run: |
+                        gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+                        gh pr create \
+                            --title "Feature: Changes from devopsDemo" \
+                            --body "This PR includes changes from the \`devopsDemo\` branch. Please review and merge." \
+                            --head devopsDemo \
+                            --base main
