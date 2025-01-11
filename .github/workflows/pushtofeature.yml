@@ -6,7 +6,11 @@ on:
     # Triggers the workflow on push or pull request events but only for the main branch
     push:
         branches: devopsDemo
-    # Jobs to be executed
+
+permissions:
+    pull-requests: write
+
+# Jobs to be executed
 jobs:
     pmd-run:
         name: Run APEX PMD
@@ -75,38 +79,10 @@ jobs:
                 run: |
                     git config --global user.name "${{ github.actor }}"
                     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-
-            # Fetch All Remote Branches
-            -   name: Fetch All Remote Branches
-                run: git fetch --all
-
-            # Verify Remote Branches
-            -   name: List Remote Branches
-                run: git branch -r
-
-            # Verify Branch State
-            -   name: Verify Branch State
-                run: |
-                    echo "Checking current branch state..."
-                    git fetch origin devopsDemo
-                    git checkout devopsDemo
-                    git log --oneline
-                    git diff origin/main
-
-            # Ensure devopsDemo branch is preserved
-            -   name: Preserve devopsDemo Branch
-                run: |
-                    git fetch origin devopsDemo
-                    git checkout devopsDemo
-                    if ! git diff --quiet origin/main; then
-                        git push origin devopsDemo
-                    else
-                        echo "No changes to push to devopsDemo."
-                    fi
             
             # Create a new Pull request
             -   name: Create Pull Request
-                uses: peter-evans/create-pull-request@v4
+                uses: peter-evans/create-pull-request@v7
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
                     branch: devopsDemo
