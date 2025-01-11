@@ -86,8 +86,8 @@ jobs:
                 uses: peter-evans/create-pull-request@v7
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
-                    branch: devopsDemo
-                    base: main
+                    branch: main
+                    base: devopsDemo
                     title: "Pull Request from ${{ github.actor }}"
                     body: |
                         This pull request was automatically created after successful PMD validation.
