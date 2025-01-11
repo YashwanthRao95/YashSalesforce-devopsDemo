@@ -8,6 +8,7 @@ on:
         branches: devopsDemo
 
 permissions:
+    contents: write
     pull-requests: write
 
 # Jobs to be executed
@@ -85,7 +86,7 @@ jobs:
                 uses: peter-evans/create-pull-request@v7
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
-                    branch: origin/devopsDemo
+                    branch: devopsDemo
                     base: main
                     title: "Pull Request from ${{ github.actor }}"
                     body: |
