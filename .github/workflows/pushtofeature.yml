@@ -76,6 +76,15 @@ jobs:
                     git config --global user.name "${{ github.actor }}"
                     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
+            # Step 3: Verify Branch State
+            -   name: Verify Branch State
+                run: |
+                    echo "Checking current branch state..."
+                    git fetch origin devopsDemo
+                    git checkout devopsDemo
+                    git log --oneline
+                    git diff origin/main
+
             # Ensure devopsDemo branch is preserved
             -   name: Preserve devopsDemo Branch
                 run: |
