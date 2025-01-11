@@ -76,7 +76,15 @@ jobs:
                     git config --global user.name "${{ github.actor }}"
                     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-            # Step 3: Verify Branch State
+            # Fetch All Remote Branches
+            -   name: Fetch All Remote Branches
+                run: git fetch --all
+
+            # Verify Remote Branches
+            -   name: List Remote Branches
+                run: git branch -r
+
+            # Verify Branch State
             -   name: Verify Branch State
                 run: |
                     echo "Checking current branch state..."
