@@ -87,12 +87,12 @@ jobs:
                 run: |
                     git fetch --all
 
-            -   name: Merge base branch (main) into current branch (devopsDemo)
+            -   name: Rebase devopsDemo onto main
                 run: |
                     git checkout devopsDemo
-                    git rebase --onto origin/main --preserve-merges origin/main || git rebase --abort
+                    git rebase --rebase-merges origin/main || git rebase --abort
               
-            -   name: Push changes if merge required
+            -   name: Push rebased changes
                 run: |
                     git push --force-with-lease origin devopsDemo
 
