@@ -3,7 +3,13 @@ public class AccountHandlerTest {
 
     @isTest
     static void testGetAllAccounts() {
+        Account acc = new Account(Name = 'Test Acc 1');
+        insert acc;
+
+        Test.startTest();
         List<Account> accounts = AccountHandler.getAllAccounts();
+        Test.stopTest();
+        
         System.assert(accounts.size() > 0, 'Accounts list should not be empty');
     }
 
