@@ -35,6 +35,13 @@ jobs:
                     echo "$SFDX_AUTH_URL" > sf-auth-url.txt
                     sf org login sfdx-url --sfdx-url-file sf-auth-url.txt --alias DevHub
 
+            # Delete existing scratch orgs
+            -   name: Delete existing scratch orgs
+                run: |
+                    sf org list --json | jq -r '.result.scratchOrgs[].alias' | while read -r alias; do
+                        sf org delete scratch --target-org "$alias" --no-prompt || true
+                    done
+
             # Create a scratch org
             -   name: Create scratch org
                 run: |
