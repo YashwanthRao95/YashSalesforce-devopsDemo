@@ -27,4 +27,4 @@ jobs:
       # Step 4: Deploy metadata or source
         -   name: Deploy metadata to Salesforce
             run: |
-                sf project deploy start --source-dir force-app --target-org DevHub --check-only
+                sf project deploy start --source-dir force-app --target-org DevHub
