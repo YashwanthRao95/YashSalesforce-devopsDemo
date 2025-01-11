@@ -46,15 +46,17 @@ jobs:
             -   name: Create scratch org
                 run: |
                     sf org create scratch --definition-file config/project-scratch-def.json --duration-days 1 --alias MyScratchOrg --target-dev-hub DevHub
-                    sf org display --alias MyScratchOrg
+                    sf org list | grep MyScratchOrg || (echo "Scratch Org creation failed" && exit 1)
 
-            # List all orgs (Debugging Step)
-            -   name: List all orgs
+            # Scratch Org Details
+            -   name: Display scratch org details
                 run: sf org list
                     
             # Set default scratch org
             -   name: Set default scratch org
-                run: sf config set target-org=MyScratchOrg --global
+                run: |
+                    sf config set target-org=MyScratchOrg --global
+                    sf config list | grep "target-org" || (echo "Failed to set default org" && exit 1)
             
             # Deploy source to scratch org
             -   name: Deploy source
