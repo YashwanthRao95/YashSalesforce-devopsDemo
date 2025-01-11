@@ -74,6 +74,8 @@ jobs:
         steps:
             -   name: Checkout Code
                 uses: actions/checkout@v3
+                with:
+                    ref: devopsDemo
             
             # Set Git user to the actor (the user who pushed the code)
             -   name: Set Git User to GITHUB_ACTOR
@@ -86,8 +88,8 @@ jobs:
                 uses: peter-evans/create-pull-request@v7
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
-                    branch: main
-                    base: devopsDemo
+                    branch: devopsDemo
+                    base: main
                     title: "Pull Request from ${{ github.actor }}"
                     body: |
                         This pull request was automatically created after successful PMD validation.
