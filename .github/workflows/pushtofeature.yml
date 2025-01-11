@@ -75,6 +75,13 @@ jobs:
                 run: |
                     git config --global user.name "${{ github.actor }}"
                     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+            # Ensure devopsDemo branch is preserved
+            -   name: Preserve devopsDemo Branch
+                run: |
+                    git fetch origin
+                    git checkout devopsDemo
+                    git push origin devopsDemo
             
             # Create a new Pull request
             -   name: Create Pull Request
