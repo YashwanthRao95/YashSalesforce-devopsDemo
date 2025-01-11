@@ -1,0 +1,30 @@
+name: Deploy to Salesforce DevHub
+
+on:
+  workflow_dispatch: # Manually trigger the workflow
+
+jobs:
+  deploy-to-salesforce:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+        -   name: Checkout repository
+            uses: actions/checkout@v3
+
+      # Step 2: Set up Salesforce CLI (sf)
+        -   name: Set up Salesforce CLI
+            run: npm install -g @salesforce/cli
+
+      # Step 3: Authenticate with Salesforce org using sf
+        -   name: Authenticate Dev Hub
+            env:
+                SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
+            run: |
+                echo "$SFDX_AUTH_URL" > sf-auth-url.txt
+                sf org login sfdx-url --sfdx-url-file sf-auth-url.txt --alias DevHub
+
+      # Step 4: Deploy metadata or source
+        -   name: Deploy metadata to Salesforce
+            run: |
+                sf project deploy start --source-dir force-app --target-org targetOrg --check-only
