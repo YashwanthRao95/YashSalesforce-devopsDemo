@@ -40,7 +40,14 @@ jobs:
                 run: |
                     sf org create scratch --definition-file config/project-scratch-def.json --duration-days 1 --alias MyScratchOrg --target-dev-hub DevHub
                     sf org display --alias MyScratchOrg
-                    sf config set target-org=MyScratchOrg --global
+
+            # List all orgs (Debugging Step)
+            -   name: List all orgs
+                run: sf org list
+                    
+            # Set default scratch org
+            -   name: Set default scratch org
+                run: sf config set target-org=MyScratchOrg --global
             
             # Deploy source to scratch org
             -   name: Deploy source
