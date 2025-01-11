@@ -4,7 +4,7 @@ public class AccountHandlerTest {
     @isTest
     static void testGetAllAccounts() {
         List<Account> accounts = AccountHandler.getAllAccounts();
-        System.assertNotNull(accounts, 'Accounts list should not be null');
+        System.assert(accounts.size() > 0, 'Accounts list should not be empty');
     }
 
     @isTest
