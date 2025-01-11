@@ -85,7 +85,7 @@ jobs:
                 uses: peter-evans/create-pull-request@v7
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
-                    branch: devopsDemo
+                    branch: origin/devopsDemo
                     base: main
                     title: "Pull Request from ${{ github.actor }}"
                     body: |
