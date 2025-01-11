@@ -82,10 +82,14 @@ jobs:
                 run: |
                     git config --global user.name "${{ github.actor }}"
                     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+            -   name: Fetch branches
+                run: |
+                    git fetch origin
             
             # Create a new Pull request
             -   name: Create Pull Request
-                uses: peter-evans/create-pull-request@v7
+                uses: peter-evans/create-pull-request@v5
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
                     branch: devopsDemo
