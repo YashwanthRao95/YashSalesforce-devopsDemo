@@ -83,18 +83,22 @@ jobs:
                     git config --global user.name "${{ github.actor }}"
                     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-            -   name: Fetch branches
+            -   name: Fetch all branches
                 run: |
-                    git fetch origin
+                    git fetch --all
 
             -   name: Merge base branch (main) into current branch (devopsDemo)
                 run: |
                     git checkout devopsDemo
-                    git merge origin/main --no-edit || true
+                    git rebase --onto origin/main --preserve-merges origin/main || git rebase --abort
               
             -   name: Push changes if merge required
                 run: |
-                    git push origin devopsDemo || echo "No changes to push"
+                    git push --force-with-lease origin devopsDemo
+
+            -   name: Check for changes before creating PR
+                run: |
+                    git diff origin/main..devopsDemo --quiet || exit 1
             
             # Create a new Pull request
             -   name: Create Pull Request
