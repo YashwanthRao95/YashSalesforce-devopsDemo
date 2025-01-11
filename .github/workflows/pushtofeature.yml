@@ -98,7 +98,10 @@ jobs:
 
             -   name: Check for changes before creating PR
                 run: |
-                    git diff origin/main..devopsDemo --quiet || exit 1
+                    if git diff origin/main..devopsDemo --quiet; then
+                        echo "No changes detected between branches. Skipping PR creation."
+                        exit 0
+                    fi
             
             # Create a new Pull request
             -   name: Create Pull Request
