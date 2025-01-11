@@ -76,7 +76,7 @@ jobs:
                     git config --global user.name "${{ github.actor }}"
                     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
             
-            # Create a Pull request
+            # Create a new Pull request
             -   name: Create Pull Request
                 uses: peter-evans/create-pull-request@v4
                 with:
