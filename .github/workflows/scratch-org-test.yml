@@ -35,49 +35,40 @@ jobs:
                     echo "$SFDX_AUTH_URL" > sf-auth-url.txt
                     sf org login sfdx-url --sfdx-url-file sf-auth-url.txt --alias DevHub
 
-            # Delete existing scratch orgs
-            -   name: Delete existing scratch orgs
-                run: |
-                    sf org list --json | jq -r '.result.scratchOrgs[].alias' | while read -r alias; do
-                        sf org delete scratch --target-org "$alias" --no-prompt || true
-                    done
-
             # Create a scratch org
             -   name: Create scratch org
                 run: |
-                    sf org create scratch --definition-file config/project-scratch-def.json --duration-days 1 --alias MyScratchOrg --target-dev-hub DevHub
-                    sf org list | grep MyScratchOrg || (echo "Scratch Org creation failed" && exit 1)
+                    sf org create scratch --definition-file config/project-scratch-def.json --duration-days 1 --alias MyScratchOrg --set-default --target-dev-hub DevHub
 
             # Scratch Org Details
             -   name: Display scratch org details
                 run: sf org list
-                    
-            # Set default scratch org
-            -   name: Set default scratch org
-                run: |
-                    sf config set target-org=MyScratchOrg --global
-                    sf config list | grep "target-org" || (echo "Failed to set default org" && exit 1)
             
             # Deploy source to scratch org
             -   name: Deploy source
                 run: |
-                    sf project deploy start --target-org MyScratchOrg
+                    sf project deploy start
 
             # Run all apex tests
+            # sf apex run test --wait 30 --output-dir test-results --result-format human (if needed to store rest results)
             -   name: Run apex tests
                 run: |
-                    sf apex run test --target-org MyScratchOrg --wait 30 --output-dir test-results --result-format junit
+                    sf apex run test --test-level RunLocalTests --wait 30 --result-format human
 
             # Upload test results
-            -   name: Upload test results
-                uses: actions/upload-artifact@v3
-                with:
-                    name: apex-test-results
-                    path: test-results/
+            #-   name: Upload test results
+            #    uses: actions/upload-artifact@v3
+            #    with:
+            #        name: apex-test-results
+            #        path: test-results/
 
             # Output access URL of scratch org
-            -   name: Display scratch org login url
-                run: |
-                    echo "To access the scratch org, run the following command:"
-                    echo "sf org open --alias MyScratchOrg"
+            #-   name: Display scratch org login url
+            #    run: |
+            #        echo "To access the scratch org, run the following command:"
+            #        echo "sf org open --alias MyScratchOrg"
+
+            # Delete the scratch org once the test classes are done
+            -   name: Delete the scratch org
+                run: sf org delete scratch --target-org MyScratchOrg --no-prompt
 
